@@ -34,6 +34,7 @@ public class FitFlowIO {
 		File jsonFile = new File(EXERCISES_PATH);
 		
 		if(jsonFile.exists()) {
+			System.out.println("[FitFlowIO.readExercisesJsonArray]: File Exists, parsing...");
 			// Read and parse to JSON Array
 			JSONParser parser = new JSONParser();
 			try {
@@ -43,6 +44,8 @@ public class FitFlowIO {
 				e.printStackTrace();
 			}
 		} else {
+			System.out.println("[FitFlowIO.readExercisesJsonArray]: File does NOT exist, creating directory and returning new array.");
+			
 			// Create directories and file that do not exist
 			File documentsDirectory = new File(DOCUMENTS_PATH);
 			documentsDirectory.mkdir();
@@ -256,12 +259,12 @@ public class FitFlowIO {
 		
 		JSONObject abdominalCrunchesObject = new JSONObject();
 		abdominalCrunchesObject.put("name", "Abdominal Crunches");
-		abdominalCrunchesObject.put("imagePath", "AbCrunch.png");
-		jsonArray.add(pushupsObject);
+		abdominalCrunchesObject.put("imagePath", "/AbCrunch.png");
+		jsonArray.add(abdominalCrunchesObject);
 		
 		JSONObject plankObject = new JSONObject();
 		plankObject.put("name", "Plank");
-		plankObject.put("imagePath", "Plank.png");
+		plankObject.put("imagePath", "/Plank.png");
 		jsonArray.add(plankObject);
 		
 		return jsonArray;

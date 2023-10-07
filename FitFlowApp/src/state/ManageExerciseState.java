@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,11 +17,12 @@ import javax.swing.ScrollPaneConstants;
 import component.ManageExercisesPanel;
 
 public class ManageExerciseState extends State {
+	private static final long serialVersionUID = 67790702042007131L;
 	private GridBagConstraints gbc;
 	private AppOverlayPanel aop;
 	
 	private JLabel manageExercisesLabel = new JLabel("Manage Exercises");
-	private JButton addExerciseButton = new JButton("+");
+	private JButton addExerciseButton = new JButton(new ImageIcon(getClass().getResource("/ADD.png")));
 	
 	private ManageExercisesPanel manageExercisesPanel;
 

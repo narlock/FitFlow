@@ -15,6 +15,7 @@ public class Window extends JFrame {
 		setTitle("FitFlow");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(600, 800);
+		setResizable(false);
 		
 		AppOverlayPanel appOverlayPanel = new AppOverlayPanel();
 		

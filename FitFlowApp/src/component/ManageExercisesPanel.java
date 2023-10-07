@@ -6,12 +6,14 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -69,11 +71,12 @@ public class ManageExercisesPanel extends JPanel {
 		return panel;
 	}
 	
-	private Image getExerciseImage(String path) {
+	private Image getExerciseImage(String filePath) {
 		Image image = null;
 		try {
-			image = ImageIO.read(getClass().getResource(path));
+			image = ImageIO.read(new File(filePath));
 			image = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+			System.out.println("[ManageExercisesPanel.getExerciseImage] Returning valid image for filePath: " + filePath);
 		} catch (Exception e) {
 			// If the file throws an error for whatever reason, assign it a default image
 			try {
@@ -95,6 +98,28 @@ public class ManageExercisesPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Open file menu dialog that will store path of exercise
+				JFileChooser fileChooser = new JFileChooser();
+                int returnValue = fileChooser.showOpenDialog(getRootPane());
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    	// Input validation
+                		String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                		if(filePath.endsWith(".png") || filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+                			System.out.println("[ManageExercisesPanel.editExercise.imageButton] Valid file chosen: " + filePath);
+                			// Set the image path
+                			exercise.setImagePath(filePath);
+                			
+                			// Update the icon of the button
+                			imageButton.setIcon(new ImageIcon(getExerciseImage(filePath)));
+                			imageButton.repaint();
+                			imageButton.revalidate();
+                			
+                		} else {
+                			// Print an error dialog
+                			throw new RuntimeException("Invalid file type");
+                		}
+                    	
+                }
 			}
 		});
 		
@@ -108,7 +133,9 @@ public class ManageExercisesPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Save the changes to local file
+				exercise.setName(titleTextField.getText());
+				FitFlowIO.upsertExercises(exercises);
+				
 				panel.removeAll();
 				viewExercise(panel, exercise);
 			}
