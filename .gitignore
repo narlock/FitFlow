@@ -1,10 +1,5 @@
 
 .DS_Store
+bin/
 *.class
-*.class
-FitFlowApp/bin/component/ManageExercisesPanel$1.class
-FitFlowApp/bin/component/ManageExercisesPanel$2.class
-*.class
-*.class
-FitFlowApp/bin/component/ManageExercisesPanel$1.class
-*.class
+FitFlowApp/bin/
