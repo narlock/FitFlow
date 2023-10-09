@@ -1,34 +1,35 @@
 package component;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import io.FitFlowIO;
 import model.Exercise;
+import state.ManageExerciseState;
+import util.FitFlowUtils;
 
 public class ManageExercisesPanel extends JPanel {
 
 	private static final long serialVersionUID = -8295711527385467430L;
 	private GridBagConstraints gbc;
 	
+	private ManageExerciseState manageExerciseState;
+	
 	private List<Exercise> exercises;
 	
-	public ManageExercisesPanel() {
+	public ManageExercisesPanel(ManageExerciseState manageExerciseState) {
+		this.manageExerciseState = manageExerciseState;
 		setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -43,7 +44,7 @@ public class ManageExercisesPanel extends JPanel {
 		JPanel panel = new JPanel();
 		
 		// Get Image
-		JLabel imageLabel = new JLabel(new ImageIcon(getExerciseImage(exercise.getImagePath())));
+		JLabel imageLabel = new JLabel(new ImageIcon(FitFlowUtils.getScaledImageForIcon(exercise.getImagePath())));
 		
 		// Get Title
 		JLabel title = new JLabel(exercise.getName() != null ? exercise.getName() : "Unknown Exercise");
@@ -62,7 +63,30 @@ public class ManageExercisesPanel extends JPanel {
 		
 		// Delete Button
 		JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/DELETE.png")));
-		
+		deleteButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int choice = JOptionPane.showConfirmDialog(getRootPane(), 
+						"Confirm removal of " + exercise.getName() + "?", 
+						"Remove Exercise", 
+						JOptionPane.DEFAULT_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, 
+						null
+					);
+				
+				if(choice == JOptionPane.YES_OPTION) {
+					exercises.remove(exercise);
+					
+					// TODO Add logic that removes all instances of this exercise
+					// from any work outs.
+					
+					FitFlowIO.upsertExercises(exercises);
+					manageExerciseState.refreshExercises();
+				}
+			}
+		});
+
 		panel.add(imageLabel);
 		panel.add(title);
 		panel.add(editButton);
@@ -71,28 +95,9 @@ public class ManageExercisesPanel extends JPanel {
 		return panel;
 	}
 	
-	private Image getExerciseImage(String filePath) {
-		Image image = null;
-		try {
-			image = ImageIO.read(new File(filePath));
-			image = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-			System.out.println("[ManageExercisesPanel.getExerciseImage] Returning valid image for filePath: " + filePath);
-		} catch (Exception e) {
-			// If the file throws an error for whatever reason, assign it a default image
-			try {
-				image = ImageIO.read(getClass().getResource("/DefaultExercise.png"));
-				image = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-			} catch (IOException e1) {
-				// If this fails, we in big trouble
-				e1.printStackTrace();
-			}
-		}
-		return image;
-	}
-	
 	private void editExercise(JPanel panel, Exercise exercise) {
 		// JButton image
-		JButton imageButton = new JButton(new ImageIcon(getExerciseImage(exercise.getImagePath())));
+		JButton imageButton = new JButton(new ImageIcon(FitFlowUtils.getScaledImageForIcon(exercise.getImagePath())));
 		imageButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -110,7 +115,7 @@ public class ManageExercisesPanel extends JPanel {
                 			exercise.setImagePath(filePath);
                 			
                 			// Update the icon of the button
-                			imageButton.setIcon(new ImageIcon(getExerciseImage(filePath)));
+                			imageButton.setIcon(new ImageIcon(FitFlowUtils.getScaledImageForIcon(filePath)));
                 			imageButton.repaint();
                 			imageButton.revalidate();
                 			
@@ -151,7 +156,7 @@ public class ManageExercisesPanel extends JPanel {
 	
 	private void viewExercise(JPanel panel, Exercise exercise) {
 		// Get Image
-		JLabel imageLabel = new JLabel(new ImageIcon(getExerciseImage(exercise.getImagePath())));
+		JLabel imageLabel = new JLabel(new ImageIcon(FitFlowUtils.getScaledImageForIcon(exercise.getImagePath())));
 		
 		// Get Title
 		JLabel title = new JLabel(exercise.getName() != null ? exercise.getName() : "Unknown Exercise");
@@ -170,6 +175,29 @@ public class ManageExercisesPanel extends JPanel {
 		
 		// Delete Button
 		JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("/DELETE.png")));
+		deleteButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int choice = JOptionPane.showConfirmDialog(getRootPane(), 
+						"Confirm removal of " + exercise.getName() + "?", 
+						"Remove Exercise", 
+						JOptionPane.DEFAULT_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, 
+						null
+					);
+				
+				if(choice == JOptionPane.YES_OPTION) {
+					exercises.remove(exercise);
+					
+					// TODO Add logic that removes all instances of this exercise
+					// from any work outs.
+					
+					FitFlowIO.upsertExercises(exercises);
+					manageExerciseState.refreshExercises();
+				}
+			}
+		});
 		
 		panel.add(imageLabel);
 		panel.add(title);
