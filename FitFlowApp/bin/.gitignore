@@ -1,6 +1,12 @@
-/io/
-/state/
+/ADD.png
+/DELETE.png
+/DONE.png
+/DefaultExercise.png
+/EDIT.png
+/Logo.png
 /component/
+/io/
 /main/
-/util/
 /model/
+/state/
+/util/
