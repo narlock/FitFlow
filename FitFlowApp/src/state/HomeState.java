@@ -9,6 +9,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+
+import component.WorkoutsPanel;
 
 public class HomeState extends State {
 
@@ -17,7 +21,8 @@ public class HomeState extends State {
 	private GridBagConstraints gbc;
 	
 	private JLabel chooseAWorkoutLabel = new JLabel("Pick your power session!");
-	private JPanel workoutPanel;
+	private JScrollPane scrollPane;
+	private WorkoutsPanel workoutsPanel;
 	private JButton manageExercisesButton = new JButton("Manage Exercises");
 	private JButton manageWorkoutsButton = new JButton("Manage Workouts");
 	
@@ -25,11 +30,22 @@ public class HomeState extends State {
 	public HomeState(AppOverlayPanel aop) {
 		super(aop);
 		this.aop = aop;
+		
 		setLayout(new GridBagLayout());
 		gbc = new GridBagConstraints();
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		
+		workoutsPanel = new WorkoutsPanel(aop);
+		
 		add(chooseAWorkoutLabel, gbc);
+		
+		scrollPane = new JScrollPane(workoutsPanel);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setPreferredSize(new Dimension(400, 400));
+		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+		add(scrollPane, gbc);
+		
+		
 		add(manageExercisesButton, gbc);
 		add(manageWorkoutsButton, gbc);
 		

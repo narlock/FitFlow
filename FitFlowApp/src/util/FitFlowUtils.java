@@ -3,8 +3,12 @@ package util;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import io.FitFlowIO;
+import model.Exercise;
 
 public class FitFlowUtils {
 
@@ -44,5 +48,17 @@ public class FitFlowUtils {
 			}
 		}
 		return image;
+	}
+	
+	public static int getExerciseIndexFromExerciseName(String exerciseName) {
+		List<Exercise> exercises = FitFlowIO.readExercises();
+		for(int i = 0; i < exercises.size(); i++) {
+			Exercise exercise = exercises.get(i);
+			if(exercise.getName().equals(exerciseName)) {
+				return i;
+			}
+		}
+		
+		throw new RuntimeException("Exercise " + exerciseName + " was not found.");
 	}
 }

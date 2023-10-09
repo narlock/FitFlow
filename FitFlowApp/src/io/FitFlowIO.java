@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import model.Exercise;
 import model.ExerciseItem;
 import model.Workout;
+import util.FitFlowUtils;
 
 public class FitFlowIO {
 	
@@ -176,10 +177,78 @@ public class FitFlowIO {
 		}
 	}
 	
-	public static List<Workout> readWorkouts() {
-		// Obtain current list of exercises for proper indexing
-		List<Exercise> exercises = readExercises();
+	public static final JSONArray readWorkoutsJsonArray() {
+		File jsonFile = new File(WORKOUTS_PATH);
 		
+		if(jsonFile.exists()) {
+			System.out.println("[FitFlowIO.readWorkoutsJsonArray]: File Exists, parsing...");
+			// Read and parse to JSON Array
+			JSONParser parser = new JSONParser();
+			try {
+				Reader reader = new FileReader(WORKOUTS_PATH);
+				return (JSONArray) parser.parse(reader);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("[FitFlowIO.readWorkoutsJsonArray]: File does NOT exist, creating directory and returning new array.");
+			
+			// Create directories and file that do not exist
+			File documentsDirectory = new File(DOCUMENTS_PATH);
+			documentsDirectory.mkdir();
+			
+			File fitFlowDirectory = new File(DIRECTORY_PATH);
+			fitFlowDirectory.mkdir();
+			
+			try {
+				jsonFile.createNewFile();
+				JSONArray sampleWorkoutsJsonArray = sampleWorkoutJsonArray();
+				writeExercisesJsonArrayToExercisesFile(sampleWorkoutsJsonArray);
+				return sampleWorkoutsJsonArray;
+			} catch (IOException proOsuGamer) {
+				proOsuGamer.printStackTrace();
+			}
+		}
+		
+		return sampleWorkoutJsonArray();
+	}
+	
+	public static void writeWorkoutsJsonArrayToWorkoutsFile(JSONArray workoutsArray) throws IOException {
+		File jsonFile = new File(WORKOUTS_PATH);
+		FileWriter fileWriter = new FileWriter(jsonFile);
+		
+		// If for some reason this is empty, we need to handle it
+		if(workoutsArray.isEmpty()) {
+			try {
+				fileWriter.write(new JSONArray().toJSONString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					fileWriter.flush();
+					fileWriter.close();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+			}
+		} else {
+			try {
+				fileWriter.write(workoutsArray.toJSONString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					fileWriter.flush();
+					fileWriter.close();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+			}
+		}
+	}
+	
+	public static List<Workout> readWorkouts() {
+		List<Exercise> exercises = readExercises();
 		// Read "Workouts" file and create individual work out
 		// A work out will contain an ordered list of Exercises,
 		// where each exercise has a work and break time.
@@ -238,14 +307,58 @@ public class FitFlowIO {
 		List<Workout> workouts = new ArrayList<Workout>();
 		
 		// For each workout stored in the json, let's create the items
-		
-		ExerciseItem exerciseItem = new ExerciseItem(exercises.get(1), 0, 0);
+		JSONArray workoutsJsonArray = readWorkoutsJsonArray();
+		for(int i = 0; i < workoutsJsonArray.size(); i++) {
+			JSONObject workoutJsonObject = (JSONObject) workoutsJsonArray.get(i);
+			
+			Workout workout = new Workout((String) workoutJsonObject.get("name"));
+			List<ExerciseItem> exerciseItems = new ArrayList<ExerciseItem>();
+			JSONArray exercisesJsonArray = (JSONArray) workoutJsonObject.get("exercises");
+			
+			for(int j = 0; j < exercisesJsonArray.size(); j++) {
+				JSONObject exerciseJsonObject = (JSONObject) exercisesJsonArray.get(i);
+				ExerciseItem exerciseItem = new ExerciseItem(
+						exercises.get((int) (long) exerciseJsonObject.get("index")), 
+						(long) exerciseJsonObject.get("work"), 
+						(long) exerciseJsonObject.get("break")
+					);
+				exerciseItems.add(exerciseItem);
+			}
+			workout.setExercises(exerciseItems);
+			workouts.add(workout);
+		}
 		
 		return workouts;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void upsertWorkouts(List<Workout> workouts) {
+		// Construct the JSONArray for the workouts list
+		JSONArray workoutsJsonArray = new JSONArray();
 		
+		for(Workout workout : workouts) {
+			JSONObject workoutJsonObject = new JSONObject();
+			workoutJsonObject.put("name", workout.getName());
+			
+			JSONArray exercisesJsonArray = new JSONArray();
+			for(ExerciseItem exerciseItem : workout.getExercises()) {
+				JSONObject exerciseJsonObject = new JSONObject();
+				exerciseJsonObject.put("index", (long) FitFlowUtils.getExerciseIndexFromExerciseName(exerciseItem.getExercise().getName()));
+				exerciseJsonObject.put("work", (long) exerciseItem.getWorkTimeInSeconds());
+				exerciseJsonObject.put("break", (long) exerciseItem.getBreakTimeInSeconds());
+				exercisesJsonArray.add(exerciseJsonObject);
+			}
+			workoutJsonObject.put("exercises", exercisesJsonArray);
+			
+			workoutsJsonArray.add(workoutJsonObject);
+		}
+		
+		// Call the writeExercisesJsonArrayToExercisesFile method with constructed array
+		try {
+			writeWorkoutsJsonArrayToWorkoutsFile(workoutsJsonArray);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -270,10 +383,58 @@ public class FitFlowIO {
 		return jsonArray;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static JSONArray sampleWorkoutJsonArray() {
 		JSONArray jsonArray = new JSONArray();
 		
-		// TODO Populate with sample values for first launch
+		JSONObject simpleWorkoutObject = new JSONObject();
+		simpleWorkoutObject.put("name", "Simple Workout");
+		JSONArray simpleWorkoutObjectExercises = new JSONArray();
+		JSONObject simpleWorkoutObjectExercise_Pushups = new JSONObject();
+		simpleWorkoutObjectExercise_Pushups.put("index", 0);
+		simpleWorkoutObjectExercise_Pushups.put("work", 25);
+		simpleWorkoutObjectExercise_Pushups.put("break", 10);
+		JSONObject simpleWorkoutObjectExercise_Crunches = new JSONObject();
+		simpleWorkoutObjectExercise_Crunches.put("index", 1);
+		simpleWorkoutObjectExercise_Crunches.put("work", 25);
+		simpleWorkoutObjectExercise_Crunches.put("break", 10);
+		JSONObject simpleWorkoutObjectExercise_Plank = new JSONObject();
+		simpleWorkoutObjectExercise_Crunches.put("index", 2);
+		simpleWorkoutObjectExercise_Crunches.put("work", 25);
+		simpleWorkoutObjectExercise_Crunches.put("break", 10);
+		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Pushups);
+		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Crunches);
+		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Plank);
+		simpleWorkoutObject.put("exercises", simpleWorkoutObjectExercises);
+		
+		JSONObject advancedWorkoutObject = new JSONObject();
+		advancedWorkoutObject.put("name", "Simple Workout");
+		JSONArray advancedWorkoutObjectExercises = new JSONArray();
+		JSONObject advancedWorkoutObjectExercise_Pushups = new JSONObject();
+		advancedWorkoutObjectExercise_Pushups.put("index", 0);
+		advancedWorkoutObjectExercise_Pushups.put("work", 25);
+		advancedWorkoutObjectExercise_Pushups.put("break", 10);
+		JSONObject advancedWorkoutObjectExercise_Crunches = new JSONObject();
+		advancedWorkoutObjectExercise_Crunches.put("index", 1);
+		advancedWorkoutObjectExercise_Crunches.put("work", 25);
+		advancedWorkoutObjectExercise_Crunches.put("break", 10);
+		JSONObject advancedWorkoutObjectExercise_Plank = new JSONObject();
+		advancedWorkoutObjectExercise_Crunches.put("index", 2);
+		advancedWorkoutObjectExercise_Crunches.put("work", 25);
+		advancedWorkoutObjectExercise_Crunches.put("break", 10);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Pushups);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Crunches);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Plank);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Pushups);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Crunches);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Plank);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Pushups);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Crunches);
+		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Plank);
+		advancedWorkoutObject.put("exercises", advancedWorkoutObjectExercises);
+		
+		jsonArray.add(simpleWorkoutObject);
+		jsonArray.add(advancedWorkoutObject);
 		
 		return jsonArray;
 	}

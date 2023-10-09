@@ -1,8 +1,5 @@
 package main;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
 import javax.swing.JFrame;
 
 import state.AppOverlayPanel;

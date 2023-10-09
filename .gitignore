@@ -4,3 +4,5 @@
 *.class
 FitFlowApp/bin/component/ManageExercisesPanel$1.class
 FitFlowApp/bin/component/ManageExercisesPanel$2.class
+*.class
+*.class

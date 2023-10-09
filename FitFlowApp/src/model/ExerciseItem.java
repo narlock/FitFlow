@@ -10,10 +10,10 @@ package model;
  */
 public class ExerciseItem {
 	private Exercise exercise;
-	private int workTimeInSeconds;
-	private int breakTimeInSeconds;
+	private long workTimeInSeconds;
+	private long breakTimeInSeconds;
 	
-	public ExerciseItem(Exercise exercise, int workTimeInSeconds, int breakTimeInSeconds) {
+	public ExerciseItem(Exercise exercise, long workTimeInSeconds, long breakTimeInSeconds) {
 		this.exercise = exercise;
 		this.workTimeInSeconds = workTimeInSeconds;
 		this.breakTimeInSeconds = breakTimeInSeconds;
@@ -27,7 +27,7 @@ public class ExerciseItem {
 		this.exercise = exercise;
 	}
 
-	public int getWorkTimeInSeconds() {
+	public long getWorkTimeInSeconds() {
 		return workTimeInSeconds;
 	}
 
@@ -35,7 +35,7 @@ public class ExerciseItem {
 		this.workTimeInSeconds = workTimeInSeconds;
 	}
 
-	public int getBreakTimeInSeconds() {
+	public long getBreakTimeInSeconds() {
 		return breakTimeInSeconds;
 	}
 
