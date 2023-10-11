@@ -8,6 +8,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -186,7 +188,12 @@ public class FitFlowIO {
 			JSONParser parser = new JSONParser();
 			try {
 				Reader reader = new FileReader(WORKOUTS_PATH);
-				return (JSONArray) parser.parse(reader);
+				JSONArray jsonArray = (JSONArray) parser.parse(reader);
+				if(jsonArray.isEmpty()) {
+					jsonArray = sampleWorkoutJsonArray();
+					writeWorkoutsJsonArrayToWorkoutsFile(jsonArray);
+				} 
+				return jsonArray;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -203,7 +210,7 @@ public class FitFlowIO {
 			try {
 				jsonFile.createNewFile();
 				JSONArray sampleWorkoutsJsonArray = sampleWorkoutJsonArray();
-				writeExercisesJsonArrayToExercisesFile(sampleWorkoutsJsonArray);
+				writeWorkoutsJsonArrayToWorkoutsFile(sampleWorkoutsJsonArray);
 				return sampleWorkoutsJsonArray;
 			} catch (IOException proOsuGamer) {
 				proOsuGamer.printStackTrace();
@@ -249,6 +256,9 @@ public class FitFlowIO {
 	
 	public static List<Workout> readWorkouts() {
 		List<Exercise> exercises = readExercises();
+		for(int k = 0; k < exercises.size(); k++) {
+			System.out.println("index " + k + ", name = " + exercises.get(k).getName());
+		}
 		// Read "Workouts" file and create individual work out
 		// A work out will contain an ordered list of Exercises,
 		// where each exercise has a work and break time.
@@ -308,6 +318,7 @@ public class FitFlowIO {
 		
 		// For each workout stored in the json, let's create the items
 		JSONArray workoutsJsonArray = readWorkoutsJsonArray();
+		
 		for(int i = 0; i < workoutsJsonArray.size(); i++) {
 			JSONObject workoutJsonObject = (JSONObject) workoutsJsonArray.get(i);
 			
@@ -315,15 +326,21 @@ public class FitFlowIO {
 			List<ExerciseItem> exerciseItems = new ArrayList<ExerciseItem>();
 			JSONArray exercisesJsonArray = (JSONArray) workoutJsonObject.get("exercises");
 			
-			for(int j = 0; j < exercisesJsonArray.size(); j++) {
-				JSONObject exerciseJsonObject = (JSONObject) exercisesJsonArray.get(i);
-				ExerciseItem exerciseItem = new ExerciseItem(
-						exercises.get((int) (long) exerciseJsonObject.get("index")), 
-						(long) exerciseJsonObject.get("work"), 
-						(long) exerciseJsonObject.get("break")
-					);
-				exerciseItems.add(exerciseItem);
+			for (int j = 0; j < exercisesJsonArray.size(); j++) {
+			    JSONObject exerciseJsonObject = (JSONObject) exercisesJsonArray.get(j);
+
+			    int indexInt = Integer.parseInt(exerciseJsonObject.get("index").toString());
+			    long workLong = Long.parseLong(exerciseJsonObject.get("work").toString());
+			    long breakLong = Long.parseLong(exerciseJsonObject.get("break").toString());
+
+			    ExerciseItem exerciseItem = new ExerciseItem(
+			        exercises.get(indexInt),
+			        workLong,
+			        breakLong
+			    );
+			    exerciseItems.add(exerciseItem);
 			}
+
 			workout.setExercises(exerciseItems);
 			workouts.add(workout);
 		}
@@ -399,16 +416,16 @@ public class FitFlowIO {
 		simpleWorkoutObjectExercise_Crunches.put("work", 25);
 		simpleWorkoutObjectExercise_Crunches.put("break", 10);
 		JSONObject simpleWorkoutObjectExercise_Plank = new JSONObject();
-		simpleWorkoutObjectExercise_Crunches.put("index", 2);
-		simpleWorkoutObjectExercise_Crunches.put("work", 25);
-		simpleWorkoutObjectExercise_Crunches.put("break", 10);
+		simpleWorkoutObjectExercise_Plank.put("index", 2);
+		simpleWorkoutObjectExercise_Plank.put("work", 25);
+		simpleWorkoutObjectExercise_Plank.put("break", 10);
 		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Pushups);
 		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Crunches);
 		simpleWorkoutObjectExercises.add(simpleWorkoutObjectExercise_Plank);
 		simpleWorkoutObject.put("exercises", simpleWorkoutObjectExercises);
 		
 		JSONObject advancedWorkoutObject = new JSONObject();
-		advancedWorkoutObject.put("name", "Simple Workout");
+		advancedWorkoutObject.put("name", "Advanced Workout");
 		JSONArray advancedWorkoutObjectExercises = new JSONArray();
 		JSONObject advancedWorkoutObjectExercise_Pushups = new JSONObject();
 		advancedWorkoutObjectExercise_Pushups.put("index", 0);
@@ -419,9 +436,9 @@ public class FitFlowIO {
 		advancedWorkoutObjectExercise_Crunches.put("work", 25);
 		advancedWorkoutObjectExercise_Crunches.put("break", 10);
 		JSONObject advancedWorkoutObjectExercise_Plank = new JSONObject();
-		advancedWorkoutObjectExercise_Crunches.put("index", 2);
-		advancedWorkoutObjectExercise_Crunches.put("work", 25);
-		advancedWorkoutObjectExercise_Crunches.put("break", 10);
+		advancedWorkoutObjectExercise_Plank.put("index", 2);
+		advancedWorkoutObjectExercise_Plank.put("work", 25);
+		advancedWorkoutObjectExercise_Plank.put("break", 10);
 		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Pushups);
 		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Crunches);
 		advancedWorkoutObjectExercises.add(advancedWorkoutObjectExercise_Plank);

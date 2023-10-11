@@ -13,6 +13,12 @@ public class ExerciseItem {
 	private long workTimeInSeconds;
 	private long breakTimeInSeconds;
 	
+	public ExerciseItem(Exercise exercise) {
+		this.exercise = exercise;
+		this.workTimeInSeconds = 0;
+		this.breakTimeInSeconds = 0;
+	}
+	
 	public ExerciseItem(Exercise exercise, long workTimeInSeconds, long breakTimeInSeconds) {
 		this.exercise = exercise;
 		this.workTimeInSeconds = workTimeInSeconds;
