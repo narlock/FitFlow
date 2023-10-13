@@ -45,7 +45,10 @@ public class WorkoutPanel extends JPanel {
 	private JPanel currentBreakTimePanel;
 	private JLabel currentExerciseBreakTime = new JLabel("Break (sec)");
 	private JTextField currentExerciseBreakTimeTextField = new JTextField(5);
+	
+	private JPanel currentButtonPanel = new JPanel();
 	private JButton currentExerciseUpdateButton = new JButton(new ImageIcon(getClass().getResource("/DONE.png")));
+	private JButton removeExistingExerciseButton = new JButton(new ImageIcon(getClass().getResource("/DELETE.png")));
 	
 	private ExerciseItem newExerciseItem;
 	private JPanel chooseExercisesPanel = new JPanel();
@@ -98,6 +101,8 @@ public class WorkoutPanel extends JPanel {
                 
                     	currentExerciseUpdateButton.setVisible(true);
                     	currentExerciseItem = workout.getExercises().get(selectedIndex);
+                    	
+                    	removeExistingExerciseButton.setVisible(true);
                 }
             }
 		});
@@ -118,7 +123,11 @@ public class WorkoutPanel extends JPanel {
 		currentBreakTimePanel.add(currentExerciseBreakTimeTextField);
 		currentExercisesPanel.add(currentBreakTimePanel, gbc);
 		currentBreakTimePanel.setVisible(false);
-		currentExercisesPanel.add(currentExerciseUpdateButton, gbc);
+		
+		currentButtonPanel = new JPanel();
+		currentButtonPanel.add(currentExerciseUpdateButton);
+		currentButtonPanel.add(removeExistingExerciseButton);
+		currentExercisesPanel.add(currentButtonPanel, gbc);
 		
 		currentExerciseUpdateButton.setVisible(false);
 		currentExerciseUpdateButton.addActionListener(new ActionListener() {
@@ -131,6 +140,21 @@ public class WorkoutPanel extends JPanel {
 				currentWorkTimePanel.setVisible(false);
 				currentBreakTimePanel.setVisible(false);
 				currentExerciseUpdateButton.setVisible(false);
+				removeExistingExerciseButton.setVisible(false);
+			}
+		});
+		
+		removeExistingExerciseButton.setVisible(false);
+		removeExistingExerciseButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				workout.getExercises().remove(currentExerciseItem);
+				
+				currentWorkTimePanel.setVisible(false);
+				currentBreakTimePanel.setVisible(false);
+				currentExerciseUpdateButton.setVisible(false);
+				removeExistingExerciseButton.setVisible(false);
 			}
 		});
 		
