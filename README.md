@@ -40,6 +40,12 @@ On the home screen, the user will see their list of workouts that they have crea
 <img src="FitFlowApp/res/ongoingWorkout.png"><br>
 </p>
 
+### High-level UML Design
+
+<p align="center">
+<img src="FitFlowApp/res/UML.png"><br>
+</p>
+
 ## Future Development
 - Calendar for workout streak tracking: tracking the amount of time you spent working out on a specific day
 - Adding encouraging and motivating messages during ongoing workouts.'
