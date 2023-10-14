@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -136,13 +137,19 @@ public class WorkoutPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentExerciseItem.setWorkTimeInSeconds(Integer.parseInt(currentExerciseWorkTimeTextField.getText()));
-				currentExerciseItem.setBreakTimeInSeconds(Integer.parseInt(currentExerciseBreakTimeTextField.getText()));
+				try {
+					currentExerciseItem.setWorkTimeInSeconds(Integer.parseInt(currentExerciseWorkTimeTextField.getText()));
+					currentExerciseItem.setBreakTimeInSeconds(Integer.parseInt(currentExerciseBreakTimeTextField.getText()));
+					
+					currentWorkTimePanel.setVisible(false);
+					currentBreakTimePanel.setVisible(false);
+					currentExerciseUpdateButton.setVisible(false);
+					removeExistingExerciseButton.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(getRootPane(), "Input validation failed on work/break time.");
+					nfe.printStackTrace();
+				}
 				
-				currentWorkTimePanel.setVisible(false);
-				currentBreakTimePanel.setVisible(false);
-				currentExerciseUpdateButton.setVisible(false);
-				removeExistingExerciseButton.setVisible(false);
 			}
 		});
 		
@@ -220,20 +227,25 @@ public class WorkoutPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				newExerciseItem.setWorkTimeInSeconds(Integer.parseInt(chooseExerciseWorkTimeTextField.getText()));
-				newExerciseItem.setBreakTimeInSeconds(Integer.parseInt(chooseExerciseBreakTimeTextField.getText()));
+				try {
+					newExerciseItem.setWorkTimeInSeconds(Integer.parseInt(chooseExerciseWorkTimeTextField.getText()));
+					newExerciseItem.setBreakTimeInSeconds(Integer.parseInt(chooseExerciseBreakTimeTextField.getText()));
+					
+					workout.getExercises().add(newExerciseItem);
+					currentExerciseListModel.addElement(newExerciseItem.getExercise().getName());
+					currentExercisesList = new JList<>(currentExerciseListModel);
+					
+					repaint();
+					revalidate();
+					
+					chooseExerciseWorkTimePanel.setVisible(false);
+					chooseExerciseBreakTimePanel.setVisible(false);
+					chooseExerciseAddButton.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(getRootPane(), "Input validation failed on work/break time.");
+					nfe.printStackTrace();
+				}
 				
-				
-				workout.getExercises().add(newExerciseItem);
-				currentExerciseListModel.addElement(newExerciseItem.getExercise().getName());
-				currentExercisesList = new JList<>(currentExerciseListModel);
-				
-				repaint();
-				revalidate();
-				
-				chooseExerciseWorkTimePanel.setVisible(false);
-				chooseExerciseBreakTimePanel.setVisible(false);
-				chooseExerciseAddButton.setVisible(false);
 			}
 		});
 	}

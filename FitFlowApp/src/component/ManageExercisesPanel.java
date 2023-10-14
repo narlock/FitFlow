@@ -121,6 +121,7 @@ public class ManageExercisesPanel extends JPanel {
                 			
                 		} else {
                 			// Print an error dialog
+                			JOptionPane.showMessageDialog(getRootPane(), "Invalid file type provided. Supports: .png, .jpg, .jpeg");
                 			throw new RuntimeException("Invalid file type");
                 		}
                     	
