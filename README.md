@@ -1,7 +1,7 @@
-<center>
+<p align="center">
 <img src="FitFlowApp/res/Logo.png"><br>
 by narlock
-</center>
+</p>
 
 Create custom workouts, track progress, and stay motivated with streaks and a workout calendar. Your fitness, your way.
 
