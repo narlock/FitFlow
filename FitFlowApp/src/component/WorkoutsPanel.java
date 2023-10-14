@@ -7,11 +7,13 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import io.FitFlowIO;
 import model.Workout;
 import state.AppOverlayPanel;
+import state.OngoingWorkoutState;
 
 public class WorkoutsPanel extends JPanel {
 
@@ -40,9 +42,13 @@ public class WorkoutsPanel extends JPanel {
 					// TODO add functionality to start workout
 					
 					// Prompt user are you ready? with JOptionPane
+					int option = JOptionPane.showConfirmDialog(getRootPane(), "Begin " + workout.getName(),
+							"Begin Workout", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 					
-					// Begin workout timer by switching to OngoingExerciseState with the current workout
-//					OngoingExerciseState(workout);
+					if(option == JOptionPane.YES_OPTION) {
+						// Begin workout timer by switching to OngoingExerciseState with the current workout
+						aop.changeState(new OngoingWorkoutState(aop, workout));
+					}
 					
 				}
 			});
