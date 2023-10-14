@@ -335,6 +335,7 @@ public class FitFlowIO {
 
 			    ExerciseItem exerciseItem = new ExerciseItem(
 			        exercises.get(indexInt),
+			        indexInt,
 			        workLong,
 			        breakLong
 			    );
@@ -384,17 +385,17 @@ public class FitFlowIO {
 		
 		JSONObject pushupsObject = new JSONObject();
 		pushupsObject.put("name", "Pushups");
-		pushupsObject.put("imagePath", "/Pushups.png");
+		pushupsObject.put("imagePath", "/PUSHUP.png");
 		jsonArray.add(pushupsObject);
 		
 		JSONObject abdominalCrunchesObject = new JSONObject();
 		abdominalCrunchesObject.put("name", "Abdominal Crunches");
-		abdominalCrunchesObject.put("imagePath", "/AbCrunch.png");
+		abdominalCrunchesObject.put("imagePath", "/CRUNCH.png");
 		jsonArray.add(abdominalCrunchesObject);
 		
 		JSONObject plankObject = new JSONObject();
 		plankObject.put("name", "Plank");
-		plankObject.put("imagePath", "/Plank.png");
+		plankObject.put("imagePath", "/PLANK.png");
 		jsonArray.add(plankObject);
 		
 		return jsonArray;

@@ -10,6 +10,7 @@ package model;
  */
 public class ExerciseItem {
 	private Exercise exercise;
+	private int index;
 	private long workTimeInSeconds;
 	private long breakTimeInSeconds;
 	
@@ -19,8 +20,9 @@ public class ExerciseItem {
 		this.breakTimeInSeconds = 0;
 	}
 	
-	public ExerciseItem(Exercise exercise, long workTimeInSeconds, long breakTimeInSeconds) {
+	public ExerciseItem(Exercise exercise, int index, long workTimeInSeconds, long breakTimeInSeconds) {
 		this.exercise = exercise;
+		this.index = index;
 		this.workTimeInSeconds = workTimeInSeconds;
 		this.breakTimeInSeconds = breakTimeInSeconds;
 	}
@@ -49,4 +51,11 @@ public class ExerciseItem {
 		this.breakTimeInSeconds = breakTimeInSeconds;
 	}
 	
+	public int getIndex() {
+		return index;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
+	}
 }

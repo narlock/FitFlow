@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,6 +17,8 @@ import javax.swing.JTextField;
 
 import io.FitFlowIO;
 import model.Exercise;
+import model.ExerciseItem;
+import model.Workout;
 import state.ManageExerciseState;
 import util.FitFlowUtils;
 
@@ -35,12 +38,13 @@ public class ManageExercisesPanel extends JPanel {
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		
 		exercises = FitFlowIO.readExercises(); // reads the exercises from local JSON file
-		for(Exercise exercise : exercises) {
-			add(createExerciseManagePanel(exercise), gbc);
+		for(int i = 0; i < exercises.size(); i++) {
+			Exercise exercise = exercises.get(i);
+			add(createExerciseManagePanel(exercise, i), gbc);
 		}
 	}
 	
-	public JPanel createExerciseManagePanel(Exercise exercise) {
+	public JPanel createExerciseManagePanel(Exercise exercise, int index) {
 		JPanel panel = new JPanel();
 		
 		// Get Image
@@ -76,12 +80,33 @@ public class ManageExercisesPanel extends JPanel {
 					);
 				
 				if(choice == JOptionPane.YES_OPTION) {
+					
+					List<Workout> workouts = FitFlowIO.readWorkouts();
+					
+					workouts.forEach(workout -> {
+						// for each workout, remove the instance of the exercise to remove by index
+					    List<ExerciseItem> exercisesToRemove = workout.getExercises().stream()
+					            .filter(exerciseItem -> exerciseItem.getIndex() == index)
+					            .collect(Collectors.toList());
+
+					    workout.getExercises().removeAll(exercisesToRemove);
+
+					    // then, reorder the indices to ensure no errors
+					    workout.getExercises().forEach(exerciseItem -> {
+					        if (exerciseItem.getIndex() > index) {
+					            exerciseItem.setIndex(exerciseItem.getIndex() - 1);
+					        }
+					    });
+					});
+					
+					// remove the exercise
 					exercises.remove(exercise);
 					
-					// TODO Add logic that removes all instances of this exercise
-					// from any work outs.
-					
+					// rewrite exercises and workouts
 					FitFlowIO.upsertExercises(exercises);
+					FitFlowIO.upsertWorkouts(workouts);
+					
+					// refresh gui
 					manageExerciseState.refreshExercises();
 				}
 			}
