@@ -35,6 +35,7 @@ public class WorkoutPanel extends JPanel {
 	private Workout workout;
 
 	private ExerciseItem currentExerciseItem;
+	private int currentExerciseItemIndex;
 	private JPanel currentExercisesPanel = new JPanel();
 	private JLabel currentExercisesLabel = new JLabel("Current Exercises");
 	private DefaultListModel<String> currentExerciseListModel;
@@ -101,6 +102,7 @@ public class WorkoutPanel extends JPanel {
                 
                     	currentExerciseUpdateButton.setVisible(true);
                     	currentExerciseItem = workout.getExercises().get(selectedIndex);
+                    	currentExerciseItemIndex = selectedIndex;
                     	
                     	removeExistingExerciseButton.setVisible(true);
                 }
@@ -150,6 +152,11 @@ public class WorkoutPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				workout.getExercises().remove(currentExerciseItem);
+				currentExerciseListModel.remove(currentExerciseItemIndex);
+				currentExercisesList = new JList<>(currentExerciseListModel);
+				
+				repaint();
+				revalidate();
 				
 				currentWorkTimePanel.setVisible(false);
 				currentBreakTimePanel.setVisible(false);

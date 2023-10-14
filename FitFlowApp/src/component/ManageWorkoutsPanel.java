@@ -86,4 +86,11 @@ public class ManageWorkoutsPanel extends JPanel {
 		
 		return panel;
 	}
+	
+	public void addNewWorkoutPanel(Workout workout) {
+		add(createWorkoutManagePanel(workout), gbc);
+		
+		revalidate();
+		repaint();
+	}
 }
