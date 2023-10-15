@@ -78,6 +78,8 @@ public class ManageWorkoutState extends State {
 					workouts.add(workout);
 					FitFlowIO.upsertWorkouts(workouts);
 					manageWorkoutsPanel.addNewWorkoutPanel(workout);
+					
+					aop.changeState(new ManageWorkoutState(aop));
 				}
 			}
 		});
